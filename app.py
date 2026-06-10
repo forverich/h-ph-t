@@ -7,7 +7,6 @@ Chạy local:
     streamlit run app.py
 """
 
-import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -57,7 +56,12 @@ st.markdown(
     f"""
     <style>
     .stApp {{ background: linear-gradient(180deg, #FFFFFF 0%, {LIGHT} 100%); }}
-    h1, h2, h3 {{ color: {NAVY}; letter-spacing: -0.3px; }}
+    h1, h2, h3, h4, h5, h6 {{ color: {NAVY} !important; letter-spacing: -0.3px; }}
+    /* Ép chữ vùng nội dung chính sang tông tối, tránh bị trắng khi máy ở dark mode */
+    section[data-testid="stMain"] p,
+    section[data-testid="stMain"] li,
+    section[data-testid="stMain"] label,
+    section[data-testid="stMain"] .stMarkdown {{ color: #324A63; }}
     .hero {{
         background: linear-gradient(120deg, {NAVY} 0%, {STEEL} 100%);
         color: white; padding: 2.2rem 2rem; border-radius: 18px;
@@ -93,6 +97,21 @@ st.markdown(
         padding: .2rem .7rem; border-radius: 999px; font-size: .8rem;
         margin: .15rem .25rem .15rem 0; border: 1px solid rgba(11,42,74,0.1);
     }}
+    table.tbl {{
+        width: 100%; border-collapse: collapse; background: white;
+        border-radius: 12px; overflow: hidden;
+        box-shadow: 0 4px 14px rgba(11,42,74,0.06);
+    }}
+    table.tbl th {{
+        background: {NAVY}; color: white !important; text-align: left;
+        padding: .7rem 1rem; font-size: .92rem;
+    }}
+    table.tbl td {{
+        padding: .65rem 1rem; color: #324A63 !important; font-size: .95rem;
+        border-bottom: 1px solid rgba(11,42,74,0.08);
+    }}
+    table.tbl tr:last-child td {{ border-bottom: none; }}
+    table.tbl tr:nth-child(even) td {{ background: {LIGHT}; }}
     section[data-testid="stSidebar"] {{ background: {NAVY}; }}
     section[data-testid="stSidebar"] * {{ color: #E6EEF7 !important; }}
     </style>
@@ -368,17 +387,21 @@ elif page == "Dashboard tài chính":
 
     st.divider()
     st.markdown("#### Bảng số liệu tổng hợp")
-    df = pd.DataFrame({
-        "Chỉ tiêu": [
-            "Doanh thu 2016", "Doanh thu 2025", "LNST 2021 (đỉnh)", "LNST 2025",
-            "Vay ngắn hạn cuối 2025", "Chi phí lãi vay 2025", "Phải thu NH cuối 2025",
-        ],
-        "Giá trị": [
-            "33.885 tỷ VND", "158.332 tỷ VND", "~35.000 tỷ VND", "15.515 tỷ VND",
-            "64,69 nghìn tỷ VND", "3,11 nghìn tỷ VND", "10,97 nghìn tỷ VND",
-        ],
-    })
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    rows = [
+        ("Doanh thu 2016", "33.885 tỷ VND"),
+        ("Doanh thu 2025", "158.332 tỷ VND"),
+        ("LNST 2021 (đỉnh)", "~35.000 tỷ VND"),
+        ("LNST 2025", "15.515 tỷ VND"),
+        ("Vay ngắn hạn cuối 2025", "64,69 nghìn tỷ VND"),
+        ("Chi phí lãi vay 2025", "3,11 nghìn tỷ VND"),
+        ("Phải thu NH cuối 2025", "10,97 nghìn tỷ VND"),
+    ]
+    body = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in rows)
+    st.markdown(
+        f"<table class='tbl'><thead><tr><th>Chỉ tiêu</th><th>Giá trị</th></tr></thead>"
+        f"<tbody>{body}</tbody></table>",
+        unsafe_allow_html=True,
+    )
 
 
 # ===========================================================================
